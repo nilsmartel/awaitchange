@@ -1,4 +1,4 @@
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 fn main() -> std::io::Result<()> {
     let names = std::env::args().skip(1).collect::<Vec<_>>();
     let mut modified = Vec::new();
@@ -14,6 +14,8 @@ fn main() -> std::io::Result<()> {
                 modified.push(date);
             }
         }
+
+        std::thread::sleep(Duration::from_secs_f32(0.5));
     }
 }
 

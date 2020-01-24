@@ -7,6 +7,4 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-notify = "5.0.0-pre.1"                     # Cross-platform filesystem notification library
-clap = "2.33.0"                   # A simple to use, efficient, and full-featured Command Line Argument Parser 
-hotwatch = "0.4.3"               # A Rust library for conveniently watching and handling file changes.
+structopt = "0.3.8"                # Parse command line argument by defining a struct.

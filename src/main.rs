@@ -1,32 +1,23 @@
-use clap::{App, Arg};
-use hotwatch::{Event, Hotwatch};
+use std::time::SystemTime;
+fn main() -> std::io::Result<()> {
+    let names = std::env::args().skip(1).collect::<Vec<_>>();
+    let mut modified = Vec::new();
 
-fn main() {
-    let matches = App::new("awaitchange")
-        .version("1.0")
-        .author("Nils Martel - <nilsmartel@yahoo.de>")
-        .about("Waits for file changes and exits")
-        .arg(
-            Arg::with_name("file")
-                .short("f")
-                .long("file")
-                .value_name("FILE")
-                .help("File to watch")
-                .takes_value(true),
-        )
-        .get_matches();
-
-    if let Some(filename) = matches.value_of("file") {
-        let mut watch = Hotwatch::new().unwrap();
-        watch
-            .watch(filename, |event: Event| match event {
-                Event::Write(_) | Event::NoticeWrite(_) => {
-                    std::process::exit(0);
+    loop {
+        for (i, file) in names.iter().enumerate() {
+            let date = last_modified(file)?;
+            if modified.len() > i {
+                if modified[i] != date {
+                    std::process::exit(1);
                 }
-                _ => std::process::exit(-1),
-            })
-            .unwrap();
-    } else {
-        eprintln!("{}", matches.usage.expect("Internal error."));
+            } else {
+                modified.push(date);
+            }
+        }
     }
+}
+
+fn last_modified(path: &str) -> std::io::Result<SystemTime> {
+    let metadata = std::fs::metadata(path)?;
+    metadata.modified()
 }

@@ -3,7 +3,11 @@ use structopt::StructOpt;
 
 #[derive(StructOpt)]
 struct Arguments {
-    #[structopt(short = "r", default_value = "2")]
+    #[structopt(
+        short = "r",
+        default_value = "2",
+        help = "How many times per second files should get checked for updates"
+    )]
     checkrate: usize,
 
     files: Vec<String>,

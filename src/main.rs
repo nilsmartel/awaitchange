@@ -1,4 +1,3 @@
-use std::path::PathBuf;
 use std::time::{Duration, SystemTime};
 use structopt::StructOpt;
 

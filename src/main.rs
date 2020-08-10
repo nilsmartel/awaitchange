@@ -3,6 +3,8 @@ use structopt::StructOpt;
 
 #[derive(StructOpt)]
 struct Arguments {
+    /// Determines how many times per second each file should be checked
+    /// Usually 2 times seems reasonable
     #[structopt(
         short = "r",
         default_value = "2",
@@ -10,7 +12,16 @@ struct Arguments {
     )]
     checkrate: usize,
 
+    /// List of files to be watched.
+    /// If any of these files changes, event will be fired.
+    #[structopt(help = "Files to be watched")]
     files: Vec<String>,
+
+    /// Command to be executed on filechange.
+    /// May be empty, in which case awaitchange simply exits
+    /// and yields controll to the next programm
+    #[structopt(short = "d", long = "do", default_value = "")]
+    command: Option<Vec<String>>,
 }
 
 fn main() -> std::io::Result<()> {
@@ -23,7 +34,7 @@ fn main() -> std::io::Result<()> {
             let date = last_modified(file)?;
             if modified.len() > i {
                 if modified[i] != date {
-                    std::process::exit(1);
+                    onchange(&args);
                 }
             } else {
                 modified.push(date);
@@ -31,6 +42,21 @@ fn main() -> std::io::Result<()> {
         }
 
         std::thread::sleep(checkrate);
+    }
+}
+
+fn onchange(args: &Arguments) {
+    match &args.command {
+        None => std::process::exit(1),
+        Some(args) => {
+            let command = &args[0];
+            let arguments = &args[1..];
+            let output = std::process::Command::new(command)
+                .args(arguments)
+                .output()
+                .expect("failed to execute command");
+            print!("{:?}", output.stdout);
+        }
     }
 }
 

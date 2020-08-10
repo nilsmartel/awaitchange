@@ -72,6 +72,9 @@ fn onchange(args: &Arguments) {
             // unsafe can easily be avoided here
             // but it's the easiest thing to do
             print!("{}", unsafe { String::from_utf8_unchecked(output.stdout) });
+
+            // also print stderr
+            print!("{}", unsafe { String::from_utf8_unchecked(output.stderr) });
         }
     }
 }

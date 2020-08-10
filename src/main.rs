@@ -14,13 +14,13 @@ struct Arguments {
 
     /// List of files to be watched.
     /// If any of these files changes, event will be fired.
-    #[structopt(help = "Files to be watched")]
+    #[structopt(long = "files", help = "Files to be watched")]
     files: Vec<String>,
 
     /// Command to be executed on filechange.
-    /// May be empty, in which case awaitchange simply exits
-    /// and yields controll to the next programm
-    #[structopt(short = "d", long = "do", default_value = "")]
+    /// If unset, awaitchange simply exits on filechange
+    /// and yields controll to the programm next in line.
+    #[structopt(long = "do", default_value = "")]
     command: Option<Vec<String>>,
 }
 
@@ -31,10 +31,11 @@ fn main() -> std::io::Result<()> {
 
     loop {
         for (i, file) in args.files.iter().enumerate() {
-            let date = last_modified(file)?;
+            let date = last_modified(file);
             if modified.len() > i {
                 if modified[i] != date {
                     onchange(&args);
+                    modified[i] = date;
                 }
             } else {
                 modified.push(date);
@@ -55,12 +56,14 @@ fn onchange(args: &Arguments) {
                 .args(arguments)
                 .output()
                 .expect("failed to execute command");
-            print!("{:?}", output.stdout);
+            print!("{}", String::from_utf8(output.stdout).unwrap());
         }
     }
 }
 
-fn last_modified(path: &str) -> std::io::Result<SystemTime> {
-    let metadata = std::fs::metadata(path)?;
-    metadata.modified()
+fn last_modified(path: &str) -> SystemTime {
+    let metadata = std::fs::metadata(path).unwrap();
+    metadata
+        .modified()
+        .expect(&format!("Failed to watch for updates in file {}", path))
 }

@@ -1,6 +1,6 @@
 [package]
 name = "awaitchange"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Nils Martel <nils.martel@graphmasters.net>"]
 edition = "2018"
 

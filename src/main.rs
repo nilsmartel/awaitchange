@@ -20,8 +20,23 @@ struct Arguments {
     /// Command to be executed on filechange.
     /// If unset, awaitchange simply exits on filechange
     /// and yields controll to the programm next in line.
-    #[structopt(long = "do", default_value = "")]
+    #[structopt(long = "do")]
     command: Option<Vec<String>>,
+}
+
+impl Arguments {
+    fn get_command(&self) -> Option<(&str, &[String])> {
+        match &self.command {
+            None => None,
+            Some(args) => {
+                if args.len() == 0 {
+                    None
+                } else {
+                    Some((&args[0], &args[1..]))
+                }
+            }
+        }
+    }
 }
 
 fn main() -> std::io::Result<()> {
@@ -47,16 +62,16 @@ fn main() -> std::io::Result<()> {
 }
 
 fn onchange(args: &Arguments) {
-    match &args.command {
+    match args.get_command() {
         None => std::process::exit(1),
-        Some(args) => {
-            let command = &args[0];
-            let arguments = &args[1..];
+        Some((command, arguments)) => {
             let output = std::process::Command::new(command)
                 .args(arguments)
                 .output()
                 .expect("failed to execute command");
-            print!("{}", String::from_utf8(output.stdout).unwrap());
+            // unsafe can easily be avoided here
+            // but it's the easiest thing to do
+            print!("{}", unsafe { String::from_utf8_unchecked(output.stdout) });
         }
     }
 }

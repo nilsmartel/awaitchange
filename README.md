@@ -43,3 +43,7 @@ Now, since 2.0.0, something like this can be done a little easier:
 ```sh
 awaitchange --watch deployment.yaml --do kubectl apply -f deployment.yaml
 ```
+
+## TODO
+
+- Allow command to be executed in parrallel

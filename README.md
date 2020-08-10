@@ -5,7 +5,7 @@ Command line tool that does little, is easy to use and helps a lot!
 ## Usage
 
 ```
-awaitchange 0.2.0
+awaitchange 0.2.1
 
 USAGE:
     awaitchange [OPTIONS]
@@ -18,7 +18,8 @@ OPTIONS:
     -r <checkrate>            How many times per second files should get checked for updates [default: 2]
         --do <command>...     Command to be executed on filechange. If unset, awaitchange simply exits on filechange and
                               yields controll to the programm next in line [default: ]
-        --files <files>...    Files to be watched
+        --watch <files>...    Files to be watched
+
 ```
 
 ## Example
@@ -32,13 +33,13 @@ you'd use awaitchange like this:
         kubectl apply -f deployment.yaml
         kubectl apply -f service.yaml
 
-        awaitchange --files deployment.yaml service.yaml
+        awaitchange --watch deployment.yaml service.yaml
     done
 ```
 
 
-Now, since 1.2.0, something like this can be done a little easier:
+Now, since 2.0.0, something like this can be done a little easier:
 
 ```sh
-awaitchange --files deployment.yaml --do kubectl apply -f deployment.yaml
+awaitchange --watch deployment.yaml --do kubectl apply -f deployment.yaml
 ```

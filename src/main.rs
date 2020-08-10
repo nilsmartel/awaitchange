@@ -14,7 +14,7 @@ struct Arguments {
 
     /// List of files to be watched.
     /// If any of these files changes, event will be fired.
-    #[structopt(long = "files", help = "Files to be watched")]
+    #[structopt(long = "watch", help = "Files to be watched")]
     files: Vec<String>,
 
     /// Command to be executed on filechange.

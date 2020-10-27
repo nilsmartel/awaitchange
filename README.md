@@ -38,7 +38,7 @@ you'd use awaitchange like this:
 ```
 
 
-Now, since 2.0.0, something like this can be done a little easier:
+Since 2.0.0, this can be done a little easier:
 
 ```sh
 awaitchange --watch deployment.yaml --do kubectl apply -f deployment.yaml

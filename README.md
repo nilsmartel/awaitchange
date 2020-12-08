@@ -5,20 +5,22 @@ Command line tool that does little, is easy to use and helps a lot!
 ## Usage
 
 ```
-awaitchange 0.2.1
+awaitchange 0.3.0
 
 USAGE:
-    awaitchange [OPTIONS]
+    awaitchange [OPTIONS] [watch]...
 
 FLAGS:
     -h, --help       Prints help information
     -V, --version    Prints version information
 
 OPTIONS:
-    -r <checkrate>            How many times per second files should get checked for updates [default: 2]
-        --do <command>...     Command to be executed on filechange. If unset, awaitchange simply exits on filechange and
-                              yields controll to the programm next in line [default: ]
-        --watch <files>...    Files to be watched
+    -r <checkrate>        How many times per second files should get checked for updates [default: 2]
+        --do <command>    Command to be executed on filechange. If unset, awaitchange simply exits on filechange and
+                          yields controll to the programm next in line
+
+ARGS:
+    <watch>...    Files to be watched
 
 ```
 
@@ -33,17 +35,13 @@ you'd use awaitchange like this:
         kubectl apply -f deployment.yaml
         kubectl apply -f service.yaml
 
-        awaitchange --watch deployment.yaml service.yaml
+        awaitchange deployment.yaml service.yaml
     done
 ```
 
+There is a shorthand for this, just use the `--do` flag an pass a script, that should be executed (in `sh`)
 
-Now, since 2.0.0, something like this can be done a little easier:
 
 ```sh
-awaitchange --watch deployment.yaml --do kubectl apply -f deployment.yaml
+awaitchange deployment.yaml --do "kubectl apply -f deployment.yaml"
 ```
-
-## TODO
-
-- Allow command to be executed in parrallel

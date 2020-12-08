@@ -14,29 +14,23 @@ struct Arguments {
 
     /// List of files to be watched.
     /// If any of these files changes, event will be fired.
-    #[structopt(long = "watch", help = "Files to be watched")]
-    files: Vec<String>,
+    #[structopt(help = "Files to be watched")]
+    watch: Vec<String>,
 
     /// Command to be executed on filechange.
     /// If unset, awaitchange simply exits on filechange
     /// and yields controll to the programm next in line.
     #[structopt(long = "do")]
-    command: Option<Vec<String>>,
-}
+    command: Option<String>,
+    // /// Determines whether or not the screen should be cleared
+    // /// before an command gets executed
+    // #[structopt(long = "clear")]
+    // clear: bool,
 
-impl Arguments {
-    fn get_command(&self) -> Option<(&str, &[String])> {
-        match &self.command {
-            None => None,
-            Some(args) => {
-                if args.len() == 0 {
-                    None
-                } else {
-                    Some((&args[0], &args[1..]))
-                }
-            }
-        }
-    }
+    // /// determines whether or not the command should be executed
+    // /// before any further actions
+    // #[structopt(long = "run")]
+    // initial_run: bool,
 }
 
 fn main() -> std::io::Result<()> {
@@ -45,7 +39,7 @@ fn main() -> std::io::Result<()> {
     let mut modified = Vec::new();
 
     loop {
-        for (i, file) in args.files.iter().enumerate() {
+        for (i, file) in args.watch.iter().enumerate() {
             let date = last_modified(file);
             if modified.len() > i {
                 if modified[i] != date {
@@ -62,11 +56,12 @@ fn main() -> std::io::Result<()> {
 }
 
 fn onchange(args: &Arguments) {
-    match args.get_command() {
+    match &args.command {
         None => std::process::exit(1),
-        Some((command, arguments)) => {
-            let output = std::process::Command::new(command)
-                .args(arguments)
+        Some(command) => {
+            let output = std::process::Command::new("sh")
+                .arg("-c")
+                .arg(&command)
                 .output()
                 .expect("failed to execute command");
             // unsafe can easily be avoided here

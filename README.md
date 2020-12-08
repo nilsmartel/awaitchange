@@ -41,7 +41,6 @@ you'd use awaitchange like this:
 
 There is a shorthand for this, just use the `--do` flag an pass a script, that should be executed (in `sh`)
 
-
 ```sh
 awaitchange deployment.yaml --do "kubectl apply -f deployment.yaml"
 ```

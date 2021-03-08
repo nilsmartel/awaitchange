@@ -3,6 +3,8 @@ name = "awaitchange"
 version = "0.3.0"
 authors = ["Nils Martel <nils.martel@graphmasters.net>"]
 edition = "2018"
+description = "CLI to perform actions on filechanges"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

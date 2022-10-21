@@ -1,3 +1,4 @@
+use last_update_time::last_update_time;
 use std::time::{Duration, SystemTime};
 use structopt::StructOpt;
 
@@ -36,19 +37,18 @@ struct Arguments {
 fn main() -> std::io::Result<()> {
     let args = Arguments::from_args();
     let checkrate = Duration::from_secs_f32(1.0 / args.checkrate as f32);
-    let mut modified = Vec::new();
 
+    let mut modified = SystemTime::UNIX_EPOCH;
     loop {
-        for (i, file) in args.watch.iter().enumerate() {
-            let date = last_modified(file);
-            if modified.len() > i {
-                if modified[i] != date {
-                    onchange(&args);
-                    modified[i] = date;
-                }
-            } else {
-                modified.push(date);
-            }
+        let mut last = SystemTime::UNIX_EPOCH;
+        for file in args.watch.iter() {
+            let date = last_update_time(file).expect("check last update");
+            last = date.max(last);
+        }
+
+        if last != modified {
+            modified = last;
+            onchange(&args);
         }
 
         std::thread::sleep(checkrate);

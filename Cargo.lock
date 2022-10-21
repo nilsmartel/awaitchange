@@ -61,9 +61,9 @@ dependencies = [
 
 [[package]]
 name = "last-update-time"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "112957fc5af48df2562ab0bbc7751520c903f74c20cfe7c862185a34f3ff2e8d"
+checksum = "9baccbafa12e55161a856657cda2002d4a529a22fa15641b405dee524025814a"
 
 [[package]]
 name = "lazy_static"

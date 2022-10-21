@@ -43,7 +43,7 @@ fn main() -> std::io::Result<()> {
         let mut last = SystemTime::UNIX_EPOCH;
         for file in args.watch.iter() {
             let date = last_update_time(file).expect("check last update");
-            last = dbg!(date.max(last));
+            last = date.max(last);
         }
 
         if last != modified {

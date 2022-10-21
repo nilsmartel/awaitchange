@@ -11,5 +11,5 @@ license = "MIT"
 [dependencies]
 structopt = "0.3.9"                # Parse command line argument by defining a struct.
 # get the last time a file or directory (including its contents) was updated
-last-update-time = "0.1.0"
+last-update-time = "0.1.1"
 

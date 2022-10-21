@@ -43,7 +43,7 @@ fn main() -> std::io::Result<()> {
         let mut last = SystemTime::UNIX_EPOCH;
         for file in args.watch.iter() {
             let date = last_update_time(file).expect("check last update");
-            last = date.max(last);
+            last = dbg!(date.max(last));
         }
 
         if last != modified {
@@ -72,11 +72,4 @@ fn onchange(args: &Arguments) {
             print!("{}", unsafe { String::from_utf8_unchecked(output.stderr) });
         }
     }
-}
-
-fn last_modified(path: &str) -> SystemTime {
-    let metadata = std::fs::metadata(path).unwrap();
-    metadata
-        .modified()
-        .expect(&format!("Failed to watch for updates in file {}", path))
 }

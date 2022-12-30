@@ -38,7 +38,7 @@ fn main() -> std::io::Result<()> {
     let args = Arguments::from_args();
     let checkrate = Duration::from_secs_f32(1.0 / args.checkrate as f32);
 
-    let mut modified = SystemTime::UNIX_EPOCH;
+    let mut modified = SystemTime::now();
     loop {
         let mut last = SystemTime::UNIX_EPOCH;
         for file in args.watch.iter() {

@@ -40,7 +40,7 @@ fn main() -> std::io::Result<()> {
 
     let mut modified = SystemTime::now();
     loop {
-        let mut last = SystemTime::UNIX_EPOCH;
+        let mut last = modified;
         for file in args.watch.iter() {
             let date = last_update_time(file).expect("check last update");
             last = date.max(last);

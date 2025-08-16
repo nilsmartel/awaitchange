@@ -1,5 +1,8 @@
 use last_update_time::last_update_time;
-use std::time::{Duration, SystemTime};
+use std::{
+    io,
+    time::{Duration, SystemTime},
+};
 use structopt::StructOpt;
 
 #[derive(StructOpt)]
@@ -16,7 +19,7 @@ struct Arguments {
     /// List of files to be watched.
     /// If any of these files changes, event will be fired.
     #[structopt(help = "Files to be watched")]
-    watch: Vec<String>,
+    files: Vec<String>,
 
     /// Command to be executed on filechange.
     /// If unset, awaitchange simply exits on filechange
@@ -37,18 +40,22 @@ struct Arguments {
 fn main() -> std::io::Result<()> {
     let Arguments {
         checkrate,
-        watch,
+        files,
         command,
     } = Arguments::from_args();
     let checkrate = Duration::from_secs_f32(1.0 / checkrate as f32);
 
     let mut modified = SystemTime::now();
     loop {
-        let mut last = modified;
-        for file in watch.iter() {
-            let date = last_update_time(file).expect("check last update");
-            last = date.max(last);
-        }
+        let last = files
+            .iter()
+            .map(|f| {
+                last_update_time(f)
+                    .map_err(|e| format!("checking file {}: {:#?}", f, e))
+                    .unwrap()
+            })
+            .max()
+            .unwrap();
 
         if last != modified {
             modified = last;

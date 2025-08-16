@@ -1,6 +1,6 @@
 [package]
 name = "awaitchange"
-version = "0.4.1"
+version = "0.4.2"
 authors = ["Nils Martel <nils.martel@graphmasters.net>"]
 edition = "2018"
 description = "CLI to perform actions on filechanges"
@@ -9,7 +9,6 @@ license = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-structopt = "0.3.9"                # Parse command line argument by defining a struct.
+structopt = "0.3.9" # Parse command line argument by defining a struct.
 # get the last time a file or directory (including its contents) was updated
 last-update-time = "0.1.1"
-

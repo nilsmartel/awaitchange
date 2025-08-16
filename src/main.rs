@@ -50,9 +50,11 @@ fn main() -> std::io::Result<()> {
         let last = files
             .iter()
             .map(|f| {
-                last_update_time(f)
-                    .map_err(|e| format!("checking file {}: {:#?}", f, e))
-                    .unwrap()
+                last_update_time(f).unwrap_or_else(|error| {
+                    use std::process::*;
+                    eprintln!("checking file {}: {}", f, error.to_string());
+                    exit(1)
+                })
             })
             .max()
             .unwrap();

@@ -5,7 +5,7 @@ Command line tool that does little, is easy to use and helps a lot!
 ## Usage
 
 ```
-awaitchange 0.3.0
+awaitchange 0.4.0
 
 USAGE:
     awaitchange [OPTIONS] [watch]...

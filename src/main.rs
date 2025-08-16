@@ -35,28 +35,32 @@ struct Arguments {
 }
 
 fn main() -> std::io::Result<()> {
-    let args = Arguments::from_args();
-    let checkrate = Duration::from_secs_f32(1.0 / args.checkrate as f32);
+    let Arguments {
+        checkrate,
+        watch,
+        command,
+    } = Arguments::from_args();
+    let checkrate = Duration::from_secs_f32(1.0 / checkrate as f32);
 
     let mut modified = SystemTime::now();
     loop {
         let mut last = modified;
-        for file in args.watch.iter() {
+        for file in watch.iter() {
             let date = last_update_time(file).expect("check last update");
             last = date.max(last);
         }
 
         if last != modified {
             modified = last;
-            onchange(&args);
+            onchange(&command);
         }
 
         std::thread::sleep(checkrate);
     }
 }
 
-fn onchange(args: &Arguments) {
-    match &args.command {
+fn onchange(command: &Option<String>) {
+    match command {
         None => std::process::exit(1),
         Some(command) => {
             let output = std::process::Command::new("sh")

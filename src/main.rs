@@ -1,8 +1,5 @@
 use last_update_time::last_update_time;
-use std::{
-    io,
-    time::{Duration, SystemTime},
-};
+use std::time::{Duration, SystemTime};
 use structopt::StructOpt;
 
 #[derive(StructOpt)]

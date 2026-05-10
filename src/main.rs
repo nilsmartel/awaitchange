@@ -21,8 +21,10 @@ struct Arguments {
     /// Command to be executed on filechange.
     /// If unset, awaitchange simply exits on filechange
     /// and yields controll to the programm next in line.
-    #[structopt(long = "do")]
-    command: Option<String>,
+    /// The special character {} can be inserted and
+    /// will be replaced by the name of the file that has changed upon execution
+    #[structopt(long = "exec", short = "-e")]
+    exec: Option<Vec<String>>,
     // /// Determines whether or not the screen should be cleared
     // /// before an command gets executed
     // #[structopt(long = "clear")]
@@ -38,7 +40,7 @@ fn main() -> std::io::Result<()> {
     let Arguments {
         checkrate,
         files,
-        command,
+        exec,
     } = Arguments::from_args();
     let checkrate = Duration::from_secs_f32(1.0 / checkrate as f32);
 

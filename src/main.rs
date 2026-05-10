@@ -46,34 +46,35 @@ fn main() -> std::io::Result<()> {
 
     let mut modified = SystemTime::now();
     loop {
-        let last = files
+        let (last, file) = files
             .iter()
             .map(|f| {
-                last_update_time(f).unwrap_or_else(|error| {
+                let t = last_update_time(f).unwrap_or_else(|error| {
                     use std::process::*;
                     eprintln!("checking file {}: {}", f, error.to_string());
                     exit(1)
-                })
+                });
+                (t, f)
             })
-            .max()
+            .max_by_key(|(a, _)| *a)
             .unwrap();
 
         if last != modified {
             modified = last;
-            onchange(&command);
+            onchange(&exec, &file);
         }
 
         std::thread::sleep(checkrate);
     }
 }
 
-fn onchange(command: &Option<String>) {
+fn onchange(command: &Option<Vec<String>>, file: &str) {
     match command {
         None => std::process::exit(1),
         Some(command) => {
-            let output = std::process::Command::new("sh")
-                .arg("-c")
-                .arg(&command)
+            let command = command.iter().map(|val| if val == "{}" {file} else {val}).collect::<Vec<_>>();
+            let output = std::process::Command::new(&command[0])
+                .args(&command[1..])
                 .output()
                 .expect("failed to execute command");
             // unsafe can easily be avoided here

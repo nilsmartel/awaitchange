@@ -5,23 +5,23 @@ Command line tool that does little, is easy to use and helps a lot!
 ## Usage
 
 ```
-awaitchange 0.4.0
+awaitchange 0.5.0
 
 USAGE:
-    awaitchange [OPTIONS] [watch]...
+    awaitchange [OPTIONS] [--] [files]...
 
 FLAGS:
     -h, --help       Prints help information
     -V, --version    Prints version information
 
 OPTIONS:
-    -r <checkrate>        How many times per second files should get checked for updates [default: 2]
-        --do <command>    Command to be executed on filechange. If unset, awaitchange simply exits on filechange and
-                          yields controll to the programm next in line
+    -r <checkrate>          How many times per second files should get checked for updates [default: 2]
+    -e, --exec <exec>...    Command to be executed on filechange. If unset, awaitchange simply exits on filechange and
+                            yields controll to the programm next in line. The special character {} can be inserted and
+                            will be replaced by the name of the file that has changed upon execution
 
 ARGS:
-    <watch>...    Files to be watched
-
+    <files>...    Files to be watched
 ```
 
 ## Example
@@ -39,8 +39,8 @@ you'd use awaitchange like this:
     done
 ```
 
-There is a shorthand for this, just use the `--do` flag an pass a script, that should be executed (in `sh`)
+There is a shorthand for this, just use the `--exec` flag an pass a script, that should be executed (in `sh`)
 
 ```sh
-awaitchange deployment.yaml --do "kubectl apply -f deployment.yaml"
+awaitchange deployment.yaml --exec kubectl apply -f {}
 ```

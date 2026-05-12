@@ -25,15 +25,6 @@ struct Arguments {
     /// will be replaced by the name of the file that has changed upon execution
     #[arg(long = "exec", short = 'e')]
     exec: Option<String>,
-    // /// Determines whether or not the screen should be cleared
-    // /// before an command gets executed
-    // #[arg(long = "clear")]
-    // clear: bool,
-
-    // /// determines whether or not the command should be executed
-    // /// before any further actions
-    // #[arg(long = "run")]
-    // initial_run: bool,
 }
 
 fn main() -> std::io::Result<()> {

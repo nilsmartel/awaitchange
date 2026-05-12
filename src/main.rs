@@ -1,13 +1,13 @@
+use clap::Parser;
 use last_update_time::last_update_time;
 use std::time::{Duration, SystemTime};
-use structopt::StructOpt;
 
-#[derive(StructOpt)]
+#[derive(Parser)]
 struct Arguments {
     /// Determines how many times per second each file should be checked
     /// Usually 2 times seems reasonable
-    #[structopt(
-        short = "r",
+    #[arg(
+        short = 'r',
         default_value = "2",
         help = "How many times per second files should get checked for updates"
     )]
@@ -15,7 +15,7 @@ struct Arguments {
 
     /// List of files to be watched.
     /// If any of these files changes, event will be fired.
-    #[structopt(help = "Files to be watched")]
+    #[arg(help = "Files to be watched")]
     files: Vec<String>,
 
     /// Command to be executed on filechange.
@@ -23,16 +23,16 @@ struct Arguments {
     /// and yields controll to the programm next in line.
     /// The special character {} can be inserted and
     /// will be replaced by the name of the file that has changed upon execution
-    #[structopt(long = "exec", short = "-e")]
+    #[arg(long = "exec", short = 'e')]
     exec: Option<Vec<String>>,
     // /// Determines whether or not the screen should be cleared
     // /// before an command gets executed
-    // #[structopt(long = "clear")]
+    // #[arg(long = "clear")]
     // clear: bool,
 
     // /// determines whether or not the command should be executed
     // /// before any further actions
-    // #[structopt(long = "run")]
+    // #[arg(long = "run")]
     // initial_run: bool,
 }
 
@@ -41,7 +41,7 @@ fn main() -> std::io::Result<()> {
         checkrate,
         files,
         exec,
-    } = Arguments::from_args();
+    } = Arguments::parse();
     let checkrate = Duration::from_secs_f32(1.0 / checkrate as f32);
 
     let mut modified = SystemTime::now();
@@ -72,7 +72,10 @@ fn onchange(command: &Option<Vec<String>>, file: &str) {
     match command {
         None => std::process::exit(1),
         Some(command) => {
-            let command = command.iter().map(|val| if val == "{}" {file} else {val}).collect::<Vec<_>>();
+            let command = command
+                .iter()
+                .map(|val| if val == "{}" { file } else { val })
+                .collect::<Vec<_>>();
             let output = std::process::Command::new(&command[0])
                 .args(&command[1..])
                 .output()

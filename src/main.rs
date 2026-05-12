@@ -21,10 +21,10 @@ struct Arguments {
     /// Command to be executed on filechange.
     /// If unset, awaitchange simply exits on filechange
     /// and yields controll to the programm next in line.
-    /// The special character {} can be inserted and
+    /// The symbol {} can be used and
     /// will be replaced by the name of the file that has changed upon execution
     #[arg(long = "exec", short = 'e')]
-    exec: Option<Vec<String>>,
+    exec: Option<String>,
     // /// Determines whether or not the screen should be cleared
     // /// before an command gets executed
     // #[arg(long = "clear")]
@@ -68,16 +68,15 @@ fn main() -> std::io::Result<()> {
     }
 }
 
-fn onchange(command: &Option<Vec<String>>, file: &str) {
+fn onchange(command: &Option<String>, file: &str) {
     match command {
         None => std::process::exit(1),
         Some(command) => {
-            let command = command
-                .iter()
-                .map(|val| if val == "{}" { file } else { val })
-                .collect::<Vec<_>>();
-            let output = std::process::Command::new(&command[0])
-                .args(&command[1..])
+            let command = command.replace("{}", file);
+
+            let output = std::process::Command::new("sh")
+                .arg("-c")
+                .arg(command)
                 .output()
                 .expect("failed to execute command");
             // unsafe can easily be avoided here

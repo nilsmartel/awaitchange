@@ -52,30 +52,30 @@ fn main() -> std::io::Result<()> {
 
         if last != modified {
             modified = last;
-            onchange(&exec, &file);
+            if let Some(ref command) = exec {
+                onchange(&command, &file);
+            } else {
+                println!("file {file} modified");
+                std::process::exit(1);
+            }
         }
 
         std::thread::sleep(checkrate);
     }
 }
 
-fn onchange(command: &Option<String>, file: &str) {
-    match command {
-        None => std::process::exit(1),
-        Some(command) => {
-            let command = command.replace("{}", file);
+fn onchange(command: &str, file: &str) {
+    let command = command.replace("{}", file);
 
-            let output = std::process::Command::new("sh")
-                .arg("-c")
-                .arg(command)
-                .output()
-                .expect("failed to execute command");
-            // unsafe can easily be avoided here
-            // but it's the easiest thing to do
-            print!("{}", unsafe { String::from_utf8_unchecked(output.stdout) });
+    let output = std::process::Command::new("sh")
+        .arg("-c")
+        .arg(command)
+        .output()
+        .expect("failed to execute command");
+    // unsafe can easily be avoided here
+    // but it's the easiest thing to do
+    print!("{}", unsafe { String::from_utf8_unchecked(output.stdout) });
 
-            // also print stderr
-            print!("{}", unsafe { String::from_utf8_unchecked(output.stderr) });
-        }
-    }
+    // also print stderr
+    print!("{}", unsafe { String::from_utf8_unchecked(output.stderr) });
 }

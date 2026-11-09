@@ -65,17 +65,26 @@ fn main() -> std::io::Result<()> {
 }
 
 fn onchange(command: &str, file: &str) {
-    let command = command.replace("{}", file);
+    // command might look like:
+    // "wc -l {}"
+    let file = escape(&file);
+    let command = command.replace("{}", &file);
 
     let output = std::process::Command::new("sh")
         .arg("-c")
         .arg(command)
         .output()
         .expect("failed to execute command");
+
     // unsafe can easily be avoided here
     // but it's the easiest thing to do
     print!("{}", unsafe { String::from_utf8_unchecked(output.stdout) });
 
     // also print stderr
     print!("{}", unsafe { String::from_utf8_unchecked(output.stderr) });
+}
+
+fn escape(s: &str) -> String {
+    let s = s.replace('"', "\\\"");
+    format!("\"{s}\"")
 }
